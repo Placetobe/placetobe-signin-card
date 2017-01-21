@@ -36,6 +36,7 @@ Placetobe Sign In Card
       id="auth"
       api-endpoint="[[apiEndpoint]]"
       signed-in="{{signedIn}}"
+      access-token="{{accessToken}}"
       on-sign-in-error="_showError"
     ></caas-auth>
 
@@ -134,6 +135,12 @@ Placetobe Sign In Card
         },
 
         signedIn: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+
+        accessToken: {
           type: Boolean,
           value: false,
           notify: true
