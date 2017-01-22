@@ -85,7 +85,7 @@ Placetobe Sign In Card
         </template>
 
         <template is="dom-if" if="[[signedIn]]">
-          <form on-keypress="_handleSignOutKeyPress">
+          <form on-submit="_handleSubmit" on-keypress="_handleSignOutKeyPress">
 
           <p>Welkom, je bent ingelogd als [[userRoleLabel]]</p>
 
@@ -185,6 +185,10 @@ Placetobe Sign In Card
 
       _hideError: function() {
         this._displayError = false;
+      },
+
+      _handleSubmit: function(evt) {
+        evt.preventDefault();
       },
 
       _handleSignInKeyPress: function(evt) {
