@@ -43,12 +43,12 @@ Placetobe Sign In Card
     <placetobe-card
       title="[[_computeTitle(signedIn, userRoleLabel)]]"
     >
-    
+
       <article slot="main">
 
         <template is="dom-if" if="[[!signedIn]]">
 
-          <form on-keypress="_handleSignInKeyPress">
+          <form on-submit="_handleSubmitForm" on-keypress="_handleSignInKeyPress">
 
             <placetobe-input-box
               type="text"
@@ -85,7 +85,7 @@ Placetobe Sign In Card
         </template>
 
         <template is="dom-if" if="[[signedIn]]">
-          <form on-submit="_handleSubmit" on-keypress="_handleSignOutKeyPress">
+          <form on-submit="_handleSubmitForm" on-keypress="_handleSignOutKeyPress">
 
           <p>Welkom, je bent ingelogd als [[userRoleLabel]]</p>
 
@@ -187,8 +187,9 @@ Placetobe Sign In Card
         this._displayError = false;
       },
 
-      _handleSubmit: function(evt) {
+      _handleSubmitForm: function(evt) {
         evt.preventDefault();
+        return false;
       },
 
       _handleSignInKeyPress: function(evt) {
