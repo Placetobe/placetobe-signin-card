@@ -41,60 +41,108 @@ Placetobe Sign In Card
     ></caas-auth>
 
     <placetobe-card
-      title="[[_computeTitle(signedIn, userRoleLabel)]]"
+      title="[[_computeTitle(signedIn, userRoleLabel, showForgotPassword)]]"
     >
 
       <article slot="main">
 
-        <template is="dom-if" if="[[!signedIn]]">
+        <template is="dom-if" if="[[!showForgotPassword]]">
 
-          <form on-submit="_handleSubmitForm" on-keypress="_handleSignInKeyPress">
+          <template is="dom-if" if="[[!signedIn]]">
 
-            <placetobe-input-box
-              type="text"
-              name="gebruikersnaam"
-              required
-              value="{{username}}"
-              pattern=".{1,}@.{2,}\..{2,}"
-              tip="voer een geldig email adres in"
-              on-input="_hideError"
-            ></placetobe-input-box>
+            <form on-submit="_handleSubmitForm" on-keypress="_handleSignInKeyPress">
 
-            <placetobe-input-box
-              type="password"
-              name="wachtwoord"
-              required
-              pattern=".{3,}"
-              value="{{password}}"
-              on-input="_hideError"
-            ></placetobe-input-box>
+              <placetobe-input-box
+                type="text"
+                name="gebruikersnaam"
+                required
+                value="{{username}}"
+                pattern=".{1,}@.{2,}\..{2,}"
+                tip="voer een geldig email adres in"
+                on-input="_hideError"
+              ></placetobe-input-box>
 
-            <p
-              class="error"
-              hidden$="[[!_displayError]]"
-            >gebruikersnaam/wachtwoord combinatie incorrect</p>
+              <placetobe-input-box
+                type="password"
+                name="wachtwoord"
+                required
+                pattern=".{3,}"
+                value="{{password}}"
+                on-input="_hideError"
+              ></placetobe-input-box>
+
+              <p
+                class="error"
+                hidden$="[[!_displayError]]"
+              >gebruikersnaam/wachtwoord combinatie incorrect</p>
+
+              <p>
+              <placetobe-button
+                on-tap="signIn"
+              ><span>Login</span>
+              </placetobe-button>
+              </p>
+              <placetobe-button
+                link
+                on-tap="_toggleShowPassword"
+              ><span>Wachtwoord vergeten?</span>
+              </placetobe-button>
+
+            </form>
+          </template>
+
+          <template is="dom-if" if="[[signedIn]]">
+            <form on-submit="_handleSubmitForm" on-keypress="_handleSignOutKeyPress">
+
+            <p>Welkom, je bent ingelogd als [[userRoleLabel]]</p>
 
             <p>
             <placetobe-button
-              on-tap="signIn"
-            ><span>Login</span>
+              on-tap="signOut"
+            ><span>Loguit</span>
             </placetobe-button>
             </p>
 
-          </form>
+            </form>
+          </template>
+
         </template>
 
-        <template is="dom-if" if="[[signedIn]]">
-          <form on-submit="_handleSubmitForm" on-keypress="_handleSignOutKeyPress">
+        <template is="dom-if" if="[[showForgotPassword]]" restamp="true">
+          <form on-submit="setPassword" on-keypress="_handleSetPasswordKeyPress">
 
-          <p>Welkom, je bent ingelogd als [[userRoleLabel]]</p>
+          <placetobe-input-box
+            type="text"
+            name="gebruikersnaam"
+            required
+            value="{{username}}"
+            pattern=".{1,}@.{2,}\..{2,}"
+            tip="voer een geldig email adres in"
+            on-input="_hideError"
+          ></placetobe-input-box>
+
+          <placetobe-input-box
+            type="password"
+            name="wachtwoord"
+            required
+            pattern=".{3,}"
+            value="{{newPassword}}"
+            display-error="{{newPasswordInvalid}}"
+            on-input="_hideError"
+          ></placetobe-input-box>
 
           <p>
           <placetobe-button
-            on-tap="signOut"
-          ><span>Loguit</span>
+            on-tap="setPassword"
+            disabled$="[[newPasswordInvalid]]"
+          ><span>Email bevestingslink</span>
           </placetobe-button>
           </p>
+          <placetobe-button
+            link
+            on-tap="_toggleShowPassword"
+          ><span>Terug naar inloggen</span>
+          </placetobe-button>
 
           </form>
         </template>
@@ -122,6 +170,20 @@ Placetobe Sign In Card
         
         password: {
           type: String,
+        },
+
+        newPassword: {
+          type: String,
+        },
+
+        newPasswordInvalid: {
+          type: Boolean,
+          value: true
+        },
+
+        showForgotPassword: {
+          type: Boolean,
+          value: false
         },
 
         userRole: {
@@ -161,10 +223,20 @@ Placetobe Sign In Card
         this.$.auth.signOut()
       },
 
-      _computeTitle: function(signedIn, userRoleLabel) {
+      setPassword: function() {
+        this.$.auth.setPassword(this.username, this.newPassword, this.userRole);
+      },
+
+      _toggleShowPassword: function() {
+        this.showForgotPassword = !this.showForgotPassword;
+      },
+
+      _computeTitle: function(signedIn, userRoleLabel, showForgotPassword) {
+        if(showForgotPassword) return 'Wachtwoord instellen';
         if(signedIn) return 'Ingelogd';
         return 'Inloggen ' + userRoleLabel + 's';
       },
+
       _computeUserRoleLabel: function(userRole) {
         switch(userRole) {
           case 'ondernemer':
@@ -198,6 +270,10 @@ Placetobe Sign In Card
 
       _handleSignOutKeyPress: function(evt) {
         if(evt.which === 13) return this.signOut();        
+      },
+
+      _handleSetPasswordKeyPress: function(evt) {
+        if(evt.which === 13) return this.setPassword();
       }
 
     });
