@@ -216,7 +216,7 @@ Placetobe Sign In Card
       },
 
       signIn: function() {
-        this.$.auth.signIn(this.username, this.password, this.userRole)
+        this.$.auth.signIn(this.username, this.password, this.userRole, null, 10);
       },
 
       signOut: function() {
@@ -224,7 +224,7 @@ Placetobe Sign In Card
       },
 
       setPassword: function() {
-        this.$.auth.setPassword(this.username, this.newPassword, this.userRole);
+        this.$.auth.setPassword(this.username, this.newPassword, this.userRole, 10);
       },
 
       _toggleShowPassword: function() {
