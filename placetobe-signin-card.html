@@ -38,6 +38,9 @@ Placetobe Sign In Card
       signed-in="{{signedIn}}"
       access-token="{{accessToken}}"
       on-sign-in-error="_showError"
+      setting-password="{{settingPassword}}"
+      signin-in="{{signingIn}}"
+      on-password-set="_handlePasswordSet"
     ></caas-auth>
 
     <placetobe-card
@@ -79,6 +82,7 @@ Placetobe Sign In Card
               <p>
               <placetobe-button
                 on-tap="signIn"
+                waiting="[[signingIn]]"
               ><span>Login</span>
               </placetobe-button>
               </p>
@@ -109,42 +113,51 @@ Placetobe Sign In Card
         </template>
 
         <template is="dom-if" if="[[showForgotPassword]]" restamp="true">
-          <form on-submit="setPassword" on-keypress="_handleSetPasswordKeyPress">
 
-          <placetobe-input-box
-            type="text"
-            name="gebruikersnaam"
-            required
-            value="{{username}}"
-            pattern=".{1,}@.{2,}\..{2,}"
-            tip="voer een geldig email adres in"
-            on-input="_hideError"
-          ></placetobe-input-box>
+          <template is="dom-if" if="[[!_passwordSet]]">
+            <form on-submit="setPassword" on-keypress="_handleSetPasswordKeyPress">
+              <placetobe-input-box
+                type="text"
+                name="gebruikersnaam"
+                required
+                value="{{username}}"
+                pattern=".{1,}@.{2,}\..{2,}"
+                tip="voer een geldig email adres in"
+                on-input="_hideError"
+              ></placetobe-input-box>
+              <placetobe-input-box
+                type="password"
+                name="wachtwoord"
+                required
+                pattern=".{3,}"
+                value="{{newPassword}}"
+                display-error="{{newPasswordInvalid}}"
+                on-input="_hideError"
+              ></placetobe-input-box>
+              <p>
+              <placetobe-button
+                on-tap="setPassword"
+                disabled$="[[newPasswordInvalid]]"
+                waiting="[[settingPassword]]"
+              ><span>Email bevestingslink</span>
+              </placetobe-button>
+              </p>
+              <placetobe-button
+                link
+                on-tap="_toggleShowPassword"
+              ><span>Terug naar inloggen</span>
+              </placetobe-button>
+            </form>
+          </template>
 
-          <placetobe-input-box
-            type="password"
-            name="wachtwoord"
-            required
-            pattern=".{3,}"
-            value="{{newPassword}}"
-            display-error="{{newPasswordInvalid}}"
-            on-input="_hideError"
-          ></placetobe-input-box>
+          <template is="dom-if" if="[[_passwordSet]]">
+            <p>We hebben een bevestigingslink naar je ge-e-maild. Klik deze aan om je nieuwe wachtwoord te activeren.</p>
+            <placetobe-button
+              on-tap="_toggleShowPassword"
+            ><span>Naar inloggen</span>
+            </placetobe-button>
+          </template>
 
-          <p>
-          <placetobe-button
-            on-tap="setPassword"
-            disabled$="[[newPasswordInvalid]]"
-          ><span>Email bevestingslink</span>
-          </placetobe-button>
-          </p>
-          <placetobe-button
-            link
-            on-tap="_toggleShowPassword"
-          ><span>Terug naar inloggen</span>
-          </placetobe-button>
-
-          </form>
         </template>
 
       </article>
@@ -208,7 +221,22 @@ Placetobe Sign In Card
           notify: true
         },
 
+        settingPassword: {
+          type: Boolean,
+          value: false
+        },
+
+        signingIn: {
+          type: Boolean,
+          value: false
+        },
+
         _displayError: {
+          type: Boolean,
+          value: false
+        },
+
+        _passwordSet: {
           type: Boolean,
           value: false
         }
@@ -274,7 +302,11 @@ Placetobe Sign In Card
 
       _handleSetPasswordKeyPress: function(evt) {
         if(evt.which === 13) return this.setPassword();
-      }
+      },
+
+      _handlePasswordSet: function() {
+        this._passwordSet = true;
+      },
 
     });
   </script>
