@@ -10,7 +10,7 @@
 `placetobe-signin-card`
 Placetobe Sign In Card
 
-@demo demo/index.html 
+@demo demo/index.html
 -->
 
 <dom-module id="placetobe-signin-card">
@@ -115,7 +115,7 @@ Placetobe Sign In Card
         <template is="dom-if" if="[[showForgotPassword]]" restamp="true">
 
           <template is="dom-if" if="[[!_passwordSet]]">
-            <form on-submit="setPassword" on-keypress="_handleSetPasswordKeyPress">
+            <!-- <form> -->
               <placetobe-input-box
                 type="text"
                 name="gebruikersnaam"
@@ -147,7 +147,7 @@ Placetobe Sign In Card
                 on-tap="_toggleShowPassword"
               ><span>Terug naar inloggen</span>
               </placetobe-button>
-            </form>
+            <!-- </form> -->
           </template>
 
           <template is="dom-if" if="[[_passwordSet]]">
@@ -172,15 +172,15 @@ Placetobe Sign In Card
       behaviors: [PlacetobeStylesBehavior],
 
       properties: {
-        
+
         apiEndpoint: {
           type: String
         },
-        
+
         username: {
           type: String,
         },
-        
+
         password: {
           type: String,
         },
@@ -297,7 +297,7 @@ Placetobe Sign In Card
       },
 
       _handleSignOutKeyPress: function(evt) {
-        if(evt.which === 13) return this.signOut();        
+        if(evt.which === 13) return this.signOut();
       },
 
       _handleSetPasswordKeyPress: function(evt) {
